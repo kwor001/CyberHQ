@@ -31,7 +31,7 @@ export function IntrusionSequence({ onBegin }) {
     addTimer(() => {
       sound.play('whoosh');
       setStep(1);
-    }, 2600);
+    }, 2200);
     return () => timers.current.forEach(clearTimeout);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -52,9 +52,9 @@ export function IntrusionSequence({ onBegin }) {
       if (i % 2 === 0) sound.play('type');
       if (i >= full.length) {
         clearInterval(iv);
-        addTimer(() => setLineIdx((n) => n + 1), 750);
+        addTimer(() => setLineIdx((n) => n + 1), 550);
       }
-    }, 55);
+    }, 40);
     timers.current.push(iv);
     return () => clearInterval(iv);
     // eslint-disable-next-line react-hooks/exhaustive-deps
