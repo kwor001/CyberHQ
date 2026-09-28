@@ -39,6 +39,16 @@ Interactive full-screen web experience for a cybersecurity career-day presentati
 - Tested: frontend E2E 100% pass (test_reports/iteration_1.json).
 
 ## Backlog / Remaining
+
+### Update — Full scripted missions + finale (2026-06)
+Replaced the earlier placeholder mini-games with detailed, educational, presenter-controlled scripted flows (all verified 100% pass, test_reports/iteration_2.json):
+- Mission 1 IDENTITY CHECK: hacker taunt -> DragonMaster99 chat -> Trust (gentle "identity not verified" + Try Again, no shaming) / Don't Trust (identity scan -> passed -> Cyber Key #1 -> Cyber Rule #1 "Don't just trust. Verify.").
+- Mission 2 CRACK THE SECRET CODE: interactive two-ring Caesar cipher wheel (arrows / drag / arrow keys), live decode of KHOOR->HELLO at shift 3, Check Code, cryptanalysis lesson, Cyber Key #2. Hidden presenter puzzles (EASY FDW->CAT, MEDIUM KHOOR->HELLO, CHALLENGE VHFUHW->SECRET). Presenter-controlled advance.
+- Mission 3 WHO CHANGED THE MESSAGE?: secure message (BLUE chair, hash 7A-91-C4-22) -> hacker intercept (G) -> tampered (RED chair, 3F-82-B9-17) -> investigate -> compare fingerprints -> hash mismatch + "HASH" lesson -> choose BLUE -> all locks open + Final Cyber Key + "Go find the key!" (physical envelope moment). Presenter triggers finale.
+- FINALE: Activate Cyber Defense -> verify bars -> remove hacker -> hacker pleads at 99% -> glitch -> ACCESS DENIED / SYSTEM SECURE + confetti -> MISSION COMPLETE / CYBER DEFENDERS CERTIFIED -> "I'LL BE BA—" / USER BLOCKED -> career-day conclusion (Identity/Cryptography/Integrity) -> WELCOME TO THE CYBER TEAM.
+- Reducer change: missions no longer auto-jump to the finale; every mission-to-mission and the finale transition is presenter-controlled (keys 1/2/3, F, or on-screen presenter buttons).
+
+## Backlog / Remaining
 - P1: Optional self-hosted fonts for guaranteed 100% offline first load.
 - P2: Accessibility (aria-live on intrusion messages).
 - P2: Additional mission variants / difficulty levels; printable certificate.

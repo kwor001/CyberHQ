@@ -31,20 +31,24 @@ export function Mission1Identity({ completed, onSolved, onContinue, isLast }) {
     if (stage !== 'scan') return;
     setScanStep(0);
     let i = 0;
+    let doneTimer;
     const iv = setInterval(() => {
       i += 1;
       sound.play('scan');
       setScanStep(i);
       if (i >= SCAN_ROWS.length) {
         clearInterval(iv);
-        setTimeout(() => {
+        doneTimer = setTimeout(() => {
           sound.play('powerup');
           onSolved(1);
           setStage('passed');
         }, 1400);
       }
     }, 850);
-    return () => clearInterval(iv);
+    return () => {
+      clearInterval(iv);
+      clearTimeout(doneTimer);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [stage]);
 
