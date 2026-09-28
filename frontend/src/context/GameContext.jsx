@@ -45,20 +45,16 @@ function reducer(state, action) {
       return { ...state, phase: 'mission', intruded: true, currentMission: action.n };
 
     case 'COMPLETE_MISSION': {
+      // Mark the lock as opened. Do NOT auto-advance to the finale —
+      // the presenter controls all mission-to-mission and finale transitions.
       const completed = state.completed.slice();
       completed[action.n - 1] = true;
-      const allDone = completed.every(Boolean);
-      return {
-        ...state,
-        completed,
-        phase: allDone ? 'victory' : state.phase,
-        effects: allDone ? { ...state.effects, burst: state.effects.burst + 1 } : state.effects,
-      };
+      return { ...state, completed };
     }
 
     case 'NEXT_MISSION': {
       const next = firstIncomplete(state.completed);
-      if (next === null) return { ...state, phase: 'victory' };
+      if (next === null) return state; // stay put; presenter triggers finale with F
       return { ...state, phase: 'mission', currentMission: next };
     }
 
@@ -67,14 +63,12 @@ function reducer(state, action) {
       const n = state.currentMission || firstIncomplete(state.completed) || 1;
       completed[n - 1] = true;
       const next = firstIncomplete(completed);
-      if (next === null)
-        return {
-          ...state,
-          completed,
-          phase: 'victory',
-          effects: { ...state.effects, burst: state.effects.burst + 1 },
-        };
-      return { ...state, completed, phase: 'mission', currentMission: next };
+      return {
+        ...state,
+        completed,
+        phase: 'mission',
+        currentMission: next || n,
+      };
     }
 
     case 'GLITCH':

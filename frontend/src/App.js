@@ -119,9 +119,10 @@ function Experience() {
     dispatch({ type: 'COMPLETE_MISSION', n });
   };
   const onContinue = () => dispatch({ type: 'NEXT_MISSION' });
+  const onFinale = () => dispatch({ type: 'FINAL' });
 
   const renderMission = () => {
-    const props = { completed, onSolved, onContinue, isLast: isLastMission(currentMission) };
+    const props = { completed, onSolved, onContinue, onFinale, isLast: isLastMission(currentMission) };
     if (currentMission === 1) return <Mission1Identity {...props} />;
     if (currentMission === 2) return <Mission2Secrets {...props} />;
     if (currentMission === 3) return <Mission3Integrity {...props} />;

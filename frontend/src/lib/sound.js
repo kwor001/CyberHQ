@@ -125,6 +125,25 @@ class SoundEngine {
         this._noise({ dur: 0.4, gain: 0.18, filter: 600 });
         this._tone({ freq: 200, dur: 0.4, type: 'sine', gain: 0.12, sweepTo: 700 });
         break;
+      case 'scan':
+        this._tone({ freq: 1500, dur: 0.05, type: 'square', gain: 0.12 });
+        break;
+      case 'reveal':
+        this._tone({ freq: 760, dur: 0.14, type: 'sine', gain: 0.2 });
+        this._tone({ freq: 1140, start: 0.06, dur: 0.12, type: 'sine', gain: 0.14 });
+        break;
+      case 'deny':
+        this._noise({ dur: 0.5, gain: 0.28, filter: 500 });
+        this._tone({ freq: 420, dur: 0.55, type: 'sawtooth', gain: 0.3, sweepTo: 70 });
+        break;
+      case 'block':
+        this._tone({ freq: 180, dur: 0.14, type: 'square', gain: 0.3 });
+        this._tone({ freq: 120, start: 0.15, dur: 0.18, type: 'square', gain: 0.3 });
+        break;
+      case 'boom':
+        this._noise({ dur: 0.7, gain: 0.35, filter: 220 });
+        this._tone({ freq: 120, dur: 0.7, type: 'sine', gain: 0.35, sweepTo: 40 });
+        break;
       default:
         break;
     }

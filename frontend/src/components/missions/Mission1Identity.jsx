@@ -1,165 +1,295 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ThumbsUp, ThumbsDown, Mail, CheckCircle2, XCircle, ShieldQuestion } from 'lucide-react';
-import { MissionFrame, MissionSuccess } from '../MissionFrame';
+import {
+  ShieldAlert,
+  ShieldCheck,
+  ArrowRight,
+  Lock,
+  Unlock,
+  KeyRound,
+  Gamepad2,
+  ShieldQuestion,
+} from 'lucide-react';
+import { MissionFrame } from '../MissionFrame';
+import { HackerBubble } from '../shared/Typewriter';
 import sound from '../../lib/sound';
 
-const SCENARIOS = [
-  {
-    from: 'GAMEZONE_PRIZES',
-    text: 'YOU WON a FREE game console! Just type your password here to claim it now!!!',
-    trust: false,
-    hint: 'Real prizes never ask for your PASSWORD. This is a trick!',
-  },
-  {
-    from: 'CYBER HQ OFFICIAL',
-    text: 'Great job today, cadets! Remember: keep your passwords secret and never share them.',
-    trust: true,
-    hint: 'Good advice with no scary demands — this one is safe to trust.',
-  },
-  {
-    from: 'unknown_sender_x99',
-    text: 'URGENT!!! Your account will be DELETED in 5 minutes. Send your password NOW!',
-    trust: false,
-    hint: 'Scary countdowns that rush you and want your password are a trap.',
-  },
-  {
-    from: 'Sam (your friend)',
-    text: 'Hi! Want to team up for the coding club project after school tomorrow?',
-    trust: true,
-    hint: 'A friendly message that asks for nothing secret — safe to trust.',
-  },
-  {
-    from: 'FREE-ROBUX-4-U',
-    text: 'Click this link for 1,000,000 FREE coins!!! No catch!!! Enter your login first.',
-    trust: false,
-    hint: '“Too good to be true” + asking you to log in = phishing scam.',
-  },
+const SCAN_ROWS = [
+  { label: 'NAME', value: 'UNKNOWN' },
+  { label: 'IDENTITY', value: 'UNVERIFIED' },
+  { label: 'TRUST STATUS', value: '⚠️ NOT VERIFIED' },
 ];
 
+const dots = (label) => '.'.repeat(Math.max(4, 22 - label.length));
+
 export function Mission1Identity({ completed, onSolved, onContinue, isLast }) {
-  const [idx, setIdx] = useState(0);
-  const [feedback, setFeedback] = useState(null); // {correct, hint}
-  const [solved, setSolved] = useState(false);
+  const [stage, setStage] = useState('intro'); // intro | chat | warning | scan | passed
+  const [scanStep, setScanStep] = useState(0);
 
-  const scenario = SCENARIOS[idx];
-
-  const answer = (choice) => {
-    if (feedback) return;
-    const correct = choice === scenario.trust;
-    if (correct) {
-      sound.play('success');
-      setFeedback({ correct: true, hint: scenario.hint });
-      setTimeout(() => {
-        setFeedback(null);
-        if (idx + 1 >= SCENARIOS.length) {
-          setSolved(true);
+  // Scan reveal stepping
+  useEffect(() => {
+    if (stage !== 'scan') return;
+    setScanStep(0);
+    let i = 0;
+    const iv = setInterval(() => {
+      i += 1;
+      sound.play('scan');
+      setScanStep(i);
+      if (i >= SCAN_ROWS.length) {
+        clearInterval(iv);
+        setTimeout(() => {
+          sound.play('powerup');
           onSolved(1);
-        } else {
-          setIdx((i) => i + 1);
-        }
-      }, 1500);
-    } else {
-      sound.play('error');
-      setFeedback({ correct: false, hint: scenario.hint });
-      setTimeout(() => setFeedback(null), 2200);
-    }
+          setStage('passed');
+        }, 1400);
+      }
+    }, 850);
+    return () => clearInterval(iv);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [stage]);
+
+  const chooseTrust = () => {
+    sound.play('alarm');
+    setStage('warning');
+  };
+  const chooseDont = () => {
+    sound.play('reveal');
+    setStage('scan');
   };
 
   return (
     <MissionFrame
       number={1}
-      name="IDENTITY"
-      question="Can you tell who to trust?"
+      name="IDENTITY CHECK"
+      question="People online are not always who they say they are."
       completed={completed}
       accent="#a855f7"
     >
-      {solved ? (
-        <MissionSuccess name="IDENTITY" isLast={isLast} onContinue={onContinue} />
-      ) : (
-        <div className="w-full max-w-4xl flex flex-col items-center gap-6">
-          {/* progress */}
-          <div className="flex gap-2" data-testid="mission1-progress">
-            {SCENARIOS.map((_, i) => (
-              <span
-                key={i}
-                className="h-2 w-12 rounded-full"
-                style={{ background: i <= idx ? '#a855f7' : '#3a3f55' }}
-              />
-            ))}
-          </div>
-          <p className="font-mono2 text-sm md:text-base text-[#94a3b8] tracking-widest">
-            MESSAGE {idx + 1} OF {SCENARIOS.length} · TRUST IT OR NOT?
-          </p>
+      <AnimatePresence mode="wait">
+        {/* INTRO ---------------------------------------------------------- */}
+        {stage === 'intro' && (
+          <motion.div key="intro" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+            <HackerBubble
+              lines={["LET'S SEE HOW EASY", 'YOU ARE TO TRICK...']}
+              accent="#a855f7"
+              onDone={() => setTimeout(() => setStage('chat'), 900)}
+            />
+          </motion.div>
+        )}
 
-          {/* message card */}
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={idx}
-              initial={{ opacity: 0, x: 40 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -40 }}
-              className="panel glow-purple w-full p-6 md:p-10"
-              data-testid="message-card"
-            >
-              <div className="flex items-center gap-3 mb-4 pb-4 border-b border-[#a855f7]/25">
-                <Mail className="text-[#00f0ff]" size={28} />
-                <span className="font-mono2 text-base md:text-xl text-[#00f0ff] tracking-wide">
-                  FROM: {scenario.from}
+        {/* CHAT ----------------------------------------------------------- */}
+        {stage === 'chat' && (
+          <motion.div
+            key="chat"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            className="w-full max-w-4xl flex flex-col items-center gap-6"
+            data-testid="identity-chat"
+          >
+            <div className="w-full panel glow-purple p-0 overflow-hidden rounded-3xl">
+              <div className="flex items-center gap-3 px-6 py-4 bg-[#1f2338] border-b border-[#a855f7]/30">
+                <span className="w-11 h-11 rounded-full bg-[#a855f7]/25 grid place-items-center">
+                  <Gamepad2 className="text-[#00f0ff]" size={26} />
                 </span>
+                <div>
+                  <p className="font-display text-xl md:text-2xl font-black text-white">🎮 DragonMaster99</p>
+                  <p className="font-mono2 text-xs md:text-sm text-[#94a3b8]">NEW MESSAGE · IDENTITY UNKNOWN</p>
+                </div>
               </div>
-              <p className="text-white text-2xl md:text-4xl font-bold leading-snug">
-                {scenario.text}
+              <div className="p-6 md:p-8">
+                <div className="inline-block bg-[#121420] border border-[#00f0ff]/30 rounded-2xl rounded-tl-none px-6 py-5 text-left">
+                  <p className="text-white text-xl md:text-3xl font-bold leading-relaxed">
+                    Hey! It's me!<br />
+                    I'm friends with your brother!<br />
+                    What's your name?<br />
+                    What school do you go to?
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <p className="font-display text-lg md:text-2xl font-black text-[#00f0ff] tracking-wide text-center">
+              CYBER TEAM: CAN WE VERIFY WHO THIS PERSON REALLY IS?
+            </p>
+
+            <div className="flex flex-col md:flex-row gap-5 md:gap-8 w-full justify-center">
+              <button
+                data-testid="choice-trust"
+                onClick={chooseTrust}
+                onMouseEnter={() => sound.play('hover')}
+                className="cyber-btn flex-1 md:flex-none flex items-center justify-center gap-3 px-10 md:px-14 py-7 md:py-9 rounded-3xl text-2xl md:text-4xl font-black uppercase text-[#0b0c10]"
+                style={{ background: '#00e676', boxShadow: '0 0 26px rgba(0,230,118,0.55)' }}
+              >
+                ✅ Trust Them
+              </button>
+              <button
+                data-testid="choice-dont-trust"
+                onClick={chooseDont}
+                onMouseEnter={() => sound.play('hover')}
+                className="cyber-btn flex-1 md:flex-none flex items-center justify-center gap-3 px-10 md:px-14 py-7 md:py-9 rounded-3xl text-2xl md:text-4xl font-black uppercase text-white"
+                style={{ background: '#a855f7', boxShadow: '0 0 26px rgba(168,85,247,0.6)' }}
+              >
+                🛑 Don't Trust Yet
+              </button>
+            </div>
+          </motion.div>
+        )}
+
+        {/* WARNING (Trust selected — gentle re-think, no shame) ------------ */}
+        {stage === 'warning' && (
+          <motion.div
+            key="warning"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0 }}
+            className="panel glow-red text-center p-10 md:p-14 max-w-3xl"
+            data-testid="identity-warning"
+          >
+            <ShieldAlert size={72} className="text-[#ffb800] mx-auto mb-4" />
+            <h2 className="font-display text-3xl md:text-5xl font-black text-[#ffb800] tracking-widest">
+              ⚠️ SECURITY WARNING
+            </h2>
+            <p className="font-display text-2xl md:text-4xl font-black text-[#ff3b5c] mt-4 tracking-wide">
+              IDENTITY NOT VERIFIED
+            </p>
+            <p className="text-[#cbd5e1] text-lg md:text-2xl mt-6 leading-relaxed">
+              How do we know this person is really who they say they are?
+            </p>
+            <button
+              data-testid="try-again-btn"
+              onClick={() => {
+                sound.play('click');
+                setStage('chat');
+              }}
+              onMouseEnter={() => sound.play('hover')}
+              className="cyber-btn glow-cyan mt-9 inline-flex items-center gap-3 px-12 py-6 rounded-2xl text-xl md:text-3xl font-black uppercase text-[#0b0c10]"
+              style={{ background: '#00f0ff' }}
+            >
+              Try Again
+            </button>
+          </motion.div>
+        )}
+
+        {/* SCAN (Don't trust selected) ------------------------------------ */}
+        {stage === 'scan' && (
+          <motion.div
+            key="scan"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="panel glow-cyan w-full max-w-3xl p-8 md:p-12"
+            data-testid="identity-scan"
+          >
+            <p className="font-display text-2xl md:text-4xl font-black text-[#00f0ff] tracking-widest mb-8 flex items-center gap-3">
+              <motion.span
+                animate={{ rotate: 360 }}
+                transition={{ duration: 1.4, repeat: Infinity, ease: 'linear' }}
+                className="inline-block"
+              >
+                <ShieldQuestion size={38} />
+              </motion.span>
+              CHECKING IDENTITY...
+            </p>
+            <div className="space-y-4">
+              {SCAN_ROWS.map((row, i) => (
+                <div
+                  key={row.label}
+                  className="mono-field flex items-center justify-between text-xl md:text-3xl font-black"
+                  style={{ opacity: scanStep > i ? 1 : 0.15, transition: 'opacity 0.3s' }}
+                >
+                  <span className="text-[#94a3b8]">
+                    {row.label} <span className="text-[#3a3f55]">{dots(row.label)}</span>
+                  </span>
+                  <span className="text-[#ff3b5c]">{scanStep > i ? row.value : '· · ·'}</span>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        )}
+
+        {/* PASSED --------------------------------------------------------- */}
+        {stage === 'passed' && (
+          <motion.div
+            key="passed"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="w-full max-w-4xl flex flex-col items-center gap-5 text-center"
+            data-testid="identity-passed"
+          >
+            <motion.div initial={{ scale: 0.7, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}>
+              <ShieldCheck size={70} className="text-[#00e676] mx-auto" />
+              <h2 className="font-display text-3xl md:text-5xl font-black text-[#00e676] text-glow-green tracking-wider mt-2">
+                CYBER DEFENSE SUCCESSFUL
+              </h2>
+              <p className="font-display text-xl md:text-3xl font-black text-white mt-2">
+                IDENTITY CHECK PASSED ✓
               </p>
             </motion.div>
-          </AnimatePresence>
 
-          {/* feedback */}
-          <div className="h-16 flex items-center">
-            <AnimatePresence>
-              {feedback && (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0 }}
-                  className={`flex items-center gap-3 font-display text-xl md:text-3xl font-black ${
-                    feedback.correct ? 'text-[#00e676]' : 'text-[#ff3b5c]'
-                  }`}
-                  data-testid="mission1-feedback"
-                >
-                  {feedback.correct ? <CheckCircle2 size={32} /> : <XCircle size={32} />}
-                  <span>{feedback.correct ? 'CORRECT!' : 'TRY AGAIN!'}</span>
-                  <span className="font-body font-medium text-base md:text-xl text-[#cbd5e1] flex items-center gap-2">
-                    <ShieldQuestion size={22} /> {feedback.hint}
-                  </span>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
+            {/* Locks */}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+              className="flex items-center gap-6 my-1"
+              data-testid="lock-row"
+            >
+              <Unlock size={54} className="text-[#00e676]" style={{ filter: 'drop-shadow(0 0 12px #00e676)' }} />
+              <Lock size={54} className="text-[#ff3b5c]" />
+              <Lock size={54} className="text-[#ff3b5c]" />
+            </motion.div>
 
-          {/* choices */}
-          <div className="flex gap-6 md:gap-10">
-            <button
-              data-testid="choice-trust"
-              onClick={() => answer(true)}
-              onMouseEnter={() => sound.play('hover')}
-              className="cyber-btn glow-green flex items-center gap-3 px-10 md:px-14 py-6 rounded-2xl text-2xl md:text-3xl font-black uppercase text-[#0b0c10]"
-              style={{ background: '#00e676' }}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.7, type: 'spring' }}
+              className="flex items-center gap-3 bg-[#ffb800]/15 border border-[#ffb800]/50 rounded-2xl px-6 py-3"
             >
-              <ThumbsUp size={34} /> Trust
-            </button>
-            <button
-              data-testid="choice-dont-trust"
-              onClick={() => answer(false)}
-              onMouseEnter={() => sound.play('hover')}
-              className="cyber-btn glow-red flex items-center gap-3 px-10 md:px-14 py-6 rounded-2xl text-2xl md:text-3xl font-black uppercase text-white"
-              style={{ background: '#ff3b5c' }}
+              <KeyRound className="text-[#ffb800]" size={34} />
+              <span className="font-display text-xl md:text-3xl font-black text-[#ffb800] tracking-wide">
+                🔑 CYBER KEY #1 RECOVERED
+              </span>
+            </motion.div>
+
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.2 }}>
+              <HackerBubble small lines={['HEY!', "THAT DOESN'T COUNT! 😡"]} accent="#a855f7" testId="hacker-angry" />
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1.8 }}
+              className="panel glow-purple px-8 py-6 max-w-2xl"
+              data-testid="cyber-rule-1"
             >
-              <ThumbsDown size={34} /> Don't Trust
-            </button>
-          </div>
-        </div>
-      )}
+              <p className="font-display text-lg md:text-2xl font-black text-[#a855f7] tracking-widest">CYBER RULE #1</p>
+              <p className="font-display text-2xl md:text-4xl font-black text-white mt-1">DON'T JUST TRUST. VERIFY.</p>
+              <p className="text-[#cbd5e1] text-base md:text-xl mt-3">
+                If something online feels strange or confusing, ask a trusted grown-up.
+              </p>
+            </motion.div>
+
+            {!isLast && (
+              <motion.button
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 2.3 }}
+                data-testid="continue-mission-btn"
+                onClick={() => {
+                  sound.play('powerup');
+                  onContinue();
+                }}
+                onMouseEnter={() => sound.play('hover')}
+                className="cyber-btn glow-magenta inline-flex items-center gap-3 px-12 py-6 rounded-2xl text-xl md:text-3xl font-black uppercase text-white mt-1"
+                style={{ background: 'linear-gradient(135deg,#e024a5,#a855f7)' }}
+              >
+                Continue to Mission 2 <ArrowRight size={30} />
+              </motion.button>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </MissionFrame>
   );
 }
