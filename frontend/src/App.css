@@ -1,0 +1,332 @@
+/* ===== CYBER HQ THEME ===== */
+:root {
+    --bg: #0b0c10;
+    --card: #121420;
+    --surface: #1f2338;
+    --purple: #a855f7;
+    --magenta: #e024a5;
+    --cyan: #00f0ff;
+    --red: #ff3b5c;
+    --green: #00e676;
+    --amber: #ffb800;
+    --muted: #94a3b8;
+}
+
+.font-display {
+    font-family: 'Orbitron', sans-serif;
+}
+.font-mono2 {
+    font-family: 'JetBrains Mono', monospace;
+}
+
+.cyber-app {
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+    position: relative;
+    background: var(--bg);
+}
+
+/* Panels */
+.panel {
+    background: rgba(18, 20, 32, 0.85);
+    border: 1px solid rgba(168, 85, 247, 0.35);
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+}
+
+.glow-purple {
+    box-shadow:
+        0 0 20px rgba(168, 85, 247, 0.4),
+        inset 0 0 20px rgba(168, 85, 247, 0.06);
+}
+.glow-magenta {
+    box-shadow:
+        0 0 24px rgba(224, 36, 165, 0.5),
+        inset 0 0 18px rgba(224, 36, 165, 0.08);
+}
+.glow-cyan {
+    box-shadow: 0 0 20px rgba(0, 240, 255, 0.45);
+}
+.glow-green {
+    box-shadow: 0 0 24px rgba(0, 230, 118, 0.5);
+}
+.glow-red {
+    box-shadow: 0 0 30px rgba(255, 59, 92, 0.6);
+}
+
+.text-glow-cyan {
+    text-shadow:
+        0 0 12px rgba(0, 240, 255, 0.8),
+        0 0 30px rgba(0, 240, 255, 0.4);
+}
+.text-glow-purple {
+    text-shadow:
+        0 0 14px rgba(168, 85, 247, 0.9),
+        0 0 34px rgba(168, 85, 247, 0.5);
+}
+.text-glow-magenta {
+    text-shadow:
+        0 0 14px rgba(224, 36, 165, 0.9),
+        0 0 34px rgba(224, 36, 165, 0.5);
+}
+.text-glow-red {
+    text-shadow:
+        0 0 14px rgba(255, 59, 92, 0.9),
+        0 0 40px rgba(255, 59, 92, 0.5);
+}
+.text-glow-green {
+    text-shadow:
+        0 0 14px rgba(0, 230, 118, 0.9),
+        0 0 34px rgba(0, 230, 118, 0.5);
+}
+
+/* Animated background grid */
+.cyber-grid {
+    position: absolute;
+    inset: -50%;
+    background-image:
+        linear-gradient(rgba(168, 85, 247, 0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(168, 85, 247, 0.08) 1px, transparent 1px);
+    background-size: 60px 60px;
+    transform: perspective(500px) rotateX(60deg);
+    animation: gridmove 12s linear infinite;
+    pointer-events: none;
+}
+@keyframes gridmove {
+    from {
+        background-position: 0 0;
+    }
+    to {
+        background-position: 0 60px;
+    }
+}
+
+/* Radar sweep */
+.radar {
+    position: absolute;
+    border-radius: 50%;
+    background: conic-gradient(
+        from 0deg,
+        rgba(0, 240, 255, 0) 0deg,
+        rgba(0, 240, 255, 0.18) 40deg,
+        rgba(0, 240, 255, 0) 90deg
+    );
+    animation: radarspin 6s linear infinite;
+    pointer-events: none;
+}
+@keyframes radarspin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.vignette {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+        ellipse at center,
+        transparent 40%,
+        rgba(0, 0, 0, 0.65) 100%
+    );
+    pointer-events: none;
+}
+
+/* Scanlines overlay */
+.scanlines::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+        to bottom,
+        rgba(255, 255, 255, 0.03) 0px,
+        rgba(255, 255, 255, 0.03) 1px,
+        transparent 2px,
+        transparent 4px
+    );
+    pointer-events: none;
+}
+
+/* Blinking status dot */
+.pulse-dot {
+    animation: pulsedot 1.4s ease-in-out infinite;
+}
+@keyframes pulsedot {
+    0%,
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.35;
+        transform: scale(0.82);
+    }
+}
+
+/* Glitch text */
+.glitch {
+    position: relative;
+    animation: glitchflick 0.25s steps(2) infinite;
+}
+.glitch::before,
+.glitch::after {
+    content: attr(data-text);
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+}
+.glitch::before {
+    color: #00f0ff;
+    transform: translate(-3px, 0);
+    clip-path: inset(0 0 55% 0);
+    opacity: 0.8;
+}
+.glitch::after {
+    color: #e024a5;
+    transform: translate(3px, 0);
+    clip-path: inset(55% 0 0 0);
+    opacity: 0.8;
+}
+@keyframes glitchflick {
+    0% {
+        transform: translate(0, 0);
+    }
+    25% {
+        transform: translate(-2px, 1px);
+    }
+    50% {
+        transform: translate(2px, -1px);
+    }
+    75% {
+        transform: translate(-1px, 0);
+    }
+    100% {
+        transform: translate(0, 0);
+    }
+}
+
+/* Full-screen glitch flash */
+.glitch-flash {
+    position: absolute;
+    inset: 0;
+    z-index: 60;
+    pointer-events: none;
+    mix-blend-mode: screen;
+    background:
+        repeating-linear-gradient(
+            to bottom,
+            rgba(224, 36, 165, 0.12) 0px,
+            rgba(224, 36, 165, 0.12) 3px,
+            transparent 3px,
+            transparent 9px
+        ),
+        repeating-linear-gradient(
+            to bottom,
+            rgba(0, 240, 255, 0.1) 0px,
+            rgba(0, 240, 255, 0.1) 2px,
+            transparent 2px,
+            transparent 7px
+        );
+    animation: glitchbars 0.4s steps(3) 1;
+}
+@keyframes glitchbars {
+    0% {
+        transform: translateY(-6px);
+        opacity: 1;
+    }
+    50% {
+        transform: translateY(8px);
+        opacity: 0.5;
+    }
+    100% {
+        transform: translateY(0);
+        opacity: 0;
+    }
+}
+
+/* Alarm strobe */
+.alarm-strobe {
+    position: absolute;
+    inset: 0;
+    z-index: 55;
+    pointer-events: none;
+    background: radial-gradient(
+        ellipse at center,
+        transparent 30%,
+        rgba(255, 59, 92, 0.35) 100%
+    );
+    animation: strobe 0.7s ease-in-out infinite;
+}
+@keyframes strobe {
+    0%,
+    100% {
+        opacity: 0.15;
+    }
+    50% {
+        opacity: 0.9;
+    }
+}
+
+.flicker {
+    animation: flicker 0.18s steps(2) 6;
+}
+@keyframes flicker {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.25;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+.float-slow {
+    animation: floaty 4s ease-in-out infinite;
+}
+@keyframes floaty {
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-12px);
+    }
+}
+
+.blink-caret::after {
+    content: '▋';
+    animation: caret 0.8s steps(1) infinite;
+    color: var(--magenta);
+}
+@keyframes caret {
+    50% {
+        opacity: 0;
+    }
+}
+
+/* Big touch button base */
+.cyber-btn {
+    font-family: 'Orbitron', sans-serif;
+    letter-spacing: 0.08em;
+    transition:
+        transform 0.15s ease,
+        box-shadow 0.2s ease,
+        background-color 0.2s ease;
+}
+.cyber-btn:hover {
+    transform: translateY(-3px);
+}
+.cyber-btn:active {
+    transform: translateY(1px) scale(0.98);
+}
+
+/* Hide scrollbars everywhere */
+* {
+    scrollbar-width: none;
+}
+*::-webkit-scrollbar {
+    display: none;
+}

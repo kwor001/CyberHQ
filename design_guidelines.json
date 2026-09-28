@@ -1,0 +1,107 @@
+{
+  "project_name": "CYBER HQ: Stop the Mystery Hacker",
+  "app_type": "3d_experience / theatrical fullscreen interactive kiosk web app",
+  "target_audience": "Children ages 7–10 in classroom presentation (projector viewed from back of room)",
+  "theme": "Dark Command Center (Dark Charcoal background with Neon Electric Purple & Magenta accents)",
+  "color_palette": {
+    "background_dark": "#0B0C10",
+    "background_card": "#121420",
+    "surface_elevated": "#1F2338",
+    "primary_purple": "#A855F7",
+    "electric_magenta": "#E024A5",
+    "cyber_cyan": "#00F0FF",
+    "alert_red": "#FF3B5C",
+    "secure_green": "#00E676",
+    "warning_amber": "#FFB800",
+    "text_primary": "#FFFFFF",
+    "text_secondary": "#94A3B8",
+    "border_glowing": "rgba(168, 85, 247, 0.4)",
+    "border_magenta": "rgba(224, 36, 165, 0.5)"
+  },
+  "typography": {
+    "fonts": {
+      "headline": "Orbitron, Rajdhani, Chivo, sans-serif",
+      "body": "Outfit, Manrope, sans-serif",
+      "mono": "JetBrains Mono, Fira Code, monospace"
+    },
+    "font_import": "@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800;900&family=Outfit:wght@400;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap');",
+    "sizes": {
+      "hero_title": "text-4xl sm:text-5xl lg:text-6xl font-black tracking-wider uppercase",
+      "section_header": "text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-wide uppercase",
+      "card_title": "text-xl sm:text-2xl font-bold uppercase",
+      "body_large": "text-lg sm:text-xl font-medium",
+      "status_badge": "text-sm sm:text-base font-mono tracking-widest uppercase font-bold"
+    }
+  },
+  "layout_and_grids": {
+    "fullscreen": "h-screen w-screen overflow-hidden bg-[#0B0C10] select-none text-white relative flex flex-col justify-between p-4 md:p-8",
+    "dashboard_grid": "grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 max-w-7xl mx-auto w-full flex-1 items-stretch py-4",
+    "kiosk_scaling": "Designed for 1920x1080 responsive scaling with minimum 24px/32px touch & click targets for high visibility from the back of the classroom."
+  },
+  "image_urls": {
+    "hacker_avatar": "https://images.unsplash.com/photo-1772371272141-0fbd644b65c4?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2Njd8MHwxfHNlYXJjaHw0fHxmcmllbmRseSUyMGNhcnRvb24lMjBteXN0ZXJ5JTIwaGFja2VyJTIwYXZhdGFyJTIwY3liZXIlMjBzdXBlcmhlcm98ZW58MHx8fHwxNzkwNTg4OTczfDA&ixlib=rb-4.1.0&q=85",
+    "usage_note": "Use this cute 3D cartoon character image for the Mystery Hacker in typing overlays, mission dialogs, and hacker reaction panels."
+  },
+  "sound_effects_engine": {
+    "type": "Web Audio API synth generator (In-browser, zero external mp3 dependencies)",
+    "sounds": [
+      "click: crisp high sine blip",
+      "alarm: dual-tone oscillating square wave warning chime",
+      "glitch: noise burst + frequency sweep",
+      "lock_close: low thud heavy bass drop + metallic click",
+      "success: triumphant arpeggiated major chord (C-E-G-C)",
+      "typing: gentle rapid soft clicks"
+    ]
+  },
+  "key_features_and_states": {
+    "fullscreen_launcher": "Initial overlay 'ENTER CYBER HQ' button that requests Browser Fullscreen API and unlocks Web Audio context.",
+    "state_secure": "Header: CYBER HQ, Subheading: CYBER DEFENSE SYSTEM. Status: SECURE (Green glow badge). THREATS DETECTED: 0. 3 modules (IDENTITY, SECRETS, INTEGRITY) locked and operational.",
+    "presenter_trigger": "Press 'H' or click hidden presenter action to start Hacker Intrusion sequence.",
+    "intrusion_sequence": {
+      "effects": "Visual flicker/glitch CSS animation, red alarm strobe overlay, alarm sound effect.",
+      "typing_messages": [
+        "HA! YOU THINK YOUR SYSTEM IS SAFE?",
+        "MYSTERY HACKER HAS TAKEN OVER CYBER HQ!",
+        "I HAVE LOCKED YOUR 3 SECURITY MODULES!",
+        "CAN YOUR CLASSROOM CADETS SOLVE ALL 3 MISSIONS TO STOP ME?"
+      ],
+      "lock_animation": "Locks slam shut sequentially with heavy sound, THREATS DETECTED counter changes to 3, STATUS becomes CRITICAL BREACH.",
+      "cta": "Prominent glowing button 'BEGIN CYBER MISSION' appears."
+    },
+    "missions": {
+      "mission_1_identity": {
+        "title": "MISSION 1: IDENTITY DEFENSE (Who To Trust)",
+        "game_type": "Interactive Phishing & Trust Detector",
+        "mechanic": "Examine incoming messages/emails/badges. Kids identify fake messages (e.g., 'Free V-Bucks! Click here!', 'Captain Byte needs your password!') vs real official alerts. Must complete 3 verification challenges to unlock IDENTITY module."
+      },
+      "mission_2_secrets": {
+        "title": "MISSION 2: SECRETS VAULT (Crack the Secret Code)",
+        "game_type": "Cyber Cipher & Password Builder Mini-Game",
+        "mechanic": "Decode a Caesar/Symbol cipher or construct a super password using length, uppercase, number, and special cyber-symbol blocks. Features live strength meter and visual cipher decoder ring."
+      },
+      "mission_3_integrity": {
+        "title": "MISSION 3: DATA INTEGRITY (Spot What Changed)",
+        "game_type": "Data Corruption Spot-The-Difference",
+        "mechanic": "Two side-by-side cyber grid transmission files. Mystery Hacker scrambled 3 data blocks (tampered values/corrupted code pixels). Kids tap the corrupted nodes to restore original data checksum."
+      }
+    },
+    "victory_sequence": "When all 3 modules are unlocked, trigger system purge animation, fireworks/laser burst particle canvas, system returns to SYSTEM SECURE, threats count to 0, and displays a printable/awardable 'CYBER DEFENDER CERTIFICATE' for the class.",
+    "presenter_help_modal": "Triggered by pressing '?' or 'Shift+H' or clicking 'Presenter Controls' button in top corner. Displays shortcut reference: H = Trigger Intrusion, 1 = Jump to Mission 1, 2 = Jump to Mission 2, 3 = Jump to Mission 3, R = Reset HQ, F = Toggle Fullscreen, Sound mute toggle."
+  },
+  "instructions_to_main_agent": [
+    "Ensure all code files are Javascript (.js / .jsx), NOT TypeScript (.tsx).",
+    "Import Orbitron, Outfit, and JetBrains Mono fonts in index.css.",
+    "Include data-testid attributes on ALL interactive buttons, mission cards, choices, and navigation triggers (e.g. data-testid='enter-fullscreen-btn', data-testid='trigger-intrusion-btn', data-testid='mission-1-card', data-testid='choice-phishing-fake').",
+    "Use Framer Motion for lock animations, glitch text, mission modal transitions, and victory particles.",
+    "Maintain strict dark theme (#0B0C10) with electric purple (#A855F7), cyan (#00F0FF), and magenta (#E024A5) glows. Never use plain white or boring corporate colors.",
+    "Ensure all text is large and ultra-readable from a distance on classroom projectors.",
+    "Prevent page scrollbars (`overflow-hidden` on body/root) and default touch gestures."
+  ],
+  "UNIVERSAL GUIDELINES FOR MAIN AGENT": [
+    "Dark colors look good when used independently with crisp glowing neon borders. DO NOT use muddy background gradients.",
+    "Every interaction needs micro-animations - hover states, pulse glows, sound effects, and entrance transitions.",
+    "Use 2-3x generous spacing with internal container padding to prevent layout crowding.",
+    "Never use generic AI emojis for icons; use Lucide-react icons like Shield, Lock, Unlock, AlertTriangle, Key, Eye, CheckCircle2, Terminal, Cpu.",
+    "All interactive elements MUST have data-testid attributes for automated testing."
+  ]
+}
